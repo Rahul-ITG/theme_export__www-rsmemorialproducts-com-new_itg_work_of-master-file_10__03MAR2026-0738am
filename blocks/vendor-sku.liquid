@@ -1,0 +1,63 @@
+{%- if block.settings.show_vendor or block.settings.show_sku or block.settings.show_barcode -%}
+  <div class="product-info__block product-info__block--sm product-vendor-sku text-sm" {{ block.shopify_attributes }}>
+    {%- if block.settings.show_vendor and product.vendor != blank -%}
+      {%- liquid
+        assign vendor_handle = product.vendor | handle
+        if collections[vendor_handle].handle == vendor_handle
+          assign vendor_url = collections[vendor_handle].url
+        else
+          assign vendor_url = product.vendor | url_for_vendor
+        endif
+      -%}
+      <span class="product-vendor">{{ product.vendor | link_to: vendor_url }}</span>
+    {%- endif -%}
+
+    {%- if block.settings.show_sku -%}
+      <span class="product-sku"{% if current_variant.sku == blank %} hidden{% endif %}>
+        {%- if block.settings.show_vendor and product.vendor != blank %} &nbsp;|&nbsp; {% endif -%}
+        <span>{{ 'products.product.sku' | t }}</span>
+        <span class="product-sku__value">{{ current_variant.sku }}</span>
+      </span>
+    {%- endif -%}
+
+    {%- if block.settings.show_barcode -%}
+      <span class="product-info__barcode"{% if current_variant.barcode == blank %} hidden{% endif %}>
+        {%- if block.settings.show_vendor or block.settings.show_sku %} &nbsp;|&nbsp; {% endif -%}
+        <span>{{ 'products.product.barcode' | t }}</span>
+        <span class="product-info__barcode-value">{% if current_variant.barcode %}{{ current_variant.barcode }}{% endif %}</span>
+      </span>
+    {%- endif -%}
+  </div>
+{%- endif -%}
+
+{% schema %}
+  {
+    "name": "Vendor / SKU / Barcode",
+    "settings": [
+      {
+        "type": "checkbox",
+        "id": "show_vendor",
+        "label": "Show vendor",
+        "default": true
+      },
+      {
+        "type": "checkbox",
+        "id": "show_sku",
+        "label": "Show SKU",
+        "default": true
+      },
+      {
+        "type": "checkbox",
+        "id": "show_barcode",
+        "label": "Show barcode",
+        "info": " ISBN, UPC, etc",
+        "default": false
+      }
+    ],
+    "presets": [
+      {
+        "name": "Vendor / SKU / Barcode"
+      }
+    ]
+  }
+{% endschema %}

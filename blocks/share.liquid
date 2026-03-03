@@ -1,0 +1,17 @@
+<div class="product-info__block" {{ block.shopify_attributes }}>
+  <div class="social-share flex items-center">
+    <p class="social-share__heading mb-0 font-bold">{{ 'general.social.share_heading' | t }}:</p>
+    {% render 'social-share', share_title: product.title, share_url: product.url, share_image: product %}
+  </div>
+</div>
+
+{% schema %}
+  {
+    "name": "Share",
+    "presets": [
+      {
+        "name": "Share"
+      }
+    ]
+  }
+{% endschema %}

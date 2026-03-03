@@ -1,0 +1,26 @@
+{%- if product.metafields.reviews.rating.value != blank -%}
+  <div class="product-info__block product-info__block--sm product-info__rating" {{ block.shopify_attributes }}>
+    {% render 'rating',
+      rating_value: product.metafields.reviews.rating.value,
+      rating_count: product.metafields.reviews.rating_count
+    %}
+  </div>
+{%- endif -%}
+
+
+{% schema %}
+  {
+    "name": "Product rating",
+    "settings": [
+      {
+        "type": "paragraph",
+        "content": "To display a rating, add a product rating app. [Learn more](https://apps.shopify.com/search?q=reviews)"
+      }
+    ],
+    "presets": [
+      {
+        "name": "Product rating"
+      }
+    ]
+  }
+{% endschema %}

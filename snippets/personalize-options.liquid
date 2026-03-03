@@ -1,0 +1,337 @@
+{% assign current_variant = product.selected_or_first_available_variant %}
+<div class="SwymGrTemplateOptionsList">
+  {% if template.suffix contains 'custom-rectangle' %}
+      <div id="RectangleSurfaceWrapper">
+          <div class="rectangle-surface-title">
+            <p class="rectangle-surface-label-text">Choose Rectangle Surface:</p>
+            <span class="Selected-rectangle-surface"></span>
+          </div>
+          <div class="rectangle-surface-input-wrapper">
+              <div class="rectangle-surface-input">
+                <input type="radio" class="rectangle-surface-radio" id="rectangle-top-face" name="rectangle-face" value="rectangle-top-face">
+                <label class="rectangle-surface-label" for="rectangle-top-face">
+                  <span>Rectangle Top Face</span>
+                  <span>Rectangle Top</span>
+                </label>
+              </div>
+              <div class="rectangle-surface-input">
+                <input  type="radio" class="rectangle-surface-radio" id="rectangle-side-face" name="rectangle-face" value="rectangle-side-face">
+                <label class="rectangle-surface-label" for="rectangle-side-face">
+                  <span>Rectangle Side Face</span>
+                  <span>Rectangle Side</span>
+                </label>
+              </div>
+              <div class="rectangle-surface-input">
+                <input type="radio" class="rectangle-surface-radio" id="rectangle-front-face" name="rectangle-face" value="rectangle-front-face">
+                <label class="rectangle-surface-label" for="rectangle-front-face">
+                  <span>Rectangle Front Face</span>
+                  <span>Rectangle Front</span>
+                </label>
+              </div>
+          </div>
+      </div>
+  {% endif %}
+
+  
+  <fieldset class="option-selector" data-selector-type="listed">
+    <div class="flex justify-between">
+      <legend class="label">Choose Template Styles: <span class="option-selector__label-value js-color-text">{{ option.selected_value }}</span></legend>
+    </div>
+    
+      <div class="SwymGrTemplateOption" id="SwymGrOption-{{ current_variant.title | handleize }}">
+        {% for image in product.metafields.custom.choose_template.value %}
+          <input type="radio" class="opt-btn visually-hidden focus-label js-option" name="properties[Template]" id="template-opt-{{ forloop.index | append: current_variant.id}}" value="{{ image.alt | escape }}" >
+          <label class="opt-label--swatch" id="label-{{ image.alt | append: '-' | append: current_variant.id }}" for="template-opt-{{ forloop.index | append: current_variant.id }}" data-media-id="{{ current_variant.featured_media.id }}" > {{ image | image_url: width: 125 | image_tag  }} </label>
+        {% endfor %}
+      </div>
+        
+  </fieldset>
+</div>
+
+
+<div class="SwymGrSelectTopWrapper">
+  <p class="SelectWord">Select Font</p>
+  <div class="SwymGrSelectWrap">
+    <div class="SwymGrCustomSelect" id="fontSelect">
+      <span>
+        <span>
+          <svg width="32" height="33" viewBox="0 0 32 33" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M10.9051 7.34717C10.8243 7.17537 10.6963 7.03011 10.5361 6.92836C10.3758 6.82661 10.1899 6.77258 10.0001 6.77258C9.81026 6.77258 9.62435 6.82661 9.46409 6.92836C9.30383 7.03011 9.17585 7.17537 9.09509 7.34717L1.09509 24.3472C1.0392 24.466 1.00726 24.5947 1.0011 24.7259C0.994942 24.8571 1.01468 24.9882 1.0592 25.1118C1.1491 25.3613 1.33444 25.5649 1.57447 25.6778C1.81449 25.7907 2.08952 25.8036 2.33906 25.7137C2.5886 25.6238 2.79221 25.4384 2.90509 25.1984L4.98759 20.7734H15.0126L17.0951 25.1984C17.151 25.3173 17.2297 25.4239 17.3269 25.5124C17.424 25.6008 17.5376 25.6692 17.6611 25.7137C17.7847 25.7582 17.9158 25.7779 18.047 25.7718C18.1782 25.7656 18.3069 25.7337 18.4257 25.6778C18.5446 25.6219 18.6512 25.5431 18.7396 25.446C18.8281 25.3489 18.8965 25.2353 18.941 25.1118C18.9855 24.9882 19.0052 24.8571 18.9991 24.7259C18.9929 24.5947 18.961 24.466 18.9051 24.3472L10.9051 7.34717ZM5.92884 18.7734L10.0001 10.1222L14.0713 18.7734H5.92884ZM25.0001 12.7734C23.4051 12.7734 22.1588 13.2072 21.2963 14.0634C21.1158 14.2517 21.0159 14.503 21.018 14.7639C21.0202 15.0247 21.1241 15.2744 21.3078 15.4596C21.4914 15.6449 21.7402 15.7511 22.001 15.7555C22.2618 15.76 22.514 15.6623 22.7038 15.4834C23.1788 15.0122 23.9538 14.7734 25.0001 14.7734C26.6538 14.7734 28.0001 15.8984 28.0001 17.2734V17.6759C27.1127 17.0822 26.0678 16.7679 25.0001 16.7734C22.2426 16.7734 20.0001 18.7922 20.0001 21.2734C20.0001 23.7547 22.2426 25.7734 25.0001 25.7734C26.0682 25.7781 27.1132 25.4624 28.0001 24.8672C28.0125 25.1324 28.1298 25.3818 28.3261 25.5605C28.5225 25.7393 28.7817 25.8327 29.047 25.8203C29.3122 25.8079 29.5616 25.6906 29.7403 25.4943C29.9191 25.2979 30.0125 25.0386 30.0001 24.7734V17.2734C30.0001 14.7922 27.7576 12.7734 25.0001 12.7734ZM25.0001 23.7734C23.3463 23.7734 22.0001 22.6484 22.0001 21.2734C22.0001 19.8984 23.3463 18.7734 25.0001 18.7734C26.6538 18.7734 28.0001 19.8984 28.0001 21.2734C28.0001 22.6484 26.6538 23.7734 25.0001 23.7734Z" fill="black"/>
+          </svg>
+        </span>
+        <span class="forMain selected-option-name">Select Font</span>
+        <span class="forMobile selected-option-name">Font</span>
+      </span>
+      <ul class="SwymGrOptionsList">
+        <li data-value="font-1">Cinzel</li>
+        <li data-value="font-2">Lucida Calligraphy</li>
+        <li data-value="font-3">Shlley Allegro Script</li>
+        <li data-value="font-4">Times</li>
+        <li data-value="font-5">Arial</li>
+        <li data-value="font-6">Verdana</li>
+      </ul>
+    </div>
+    
+    <div class="SwymGrCustomSelect" id="fontSizeSelect">
+      <span class="forMain selected-option-name">Select Font Size</span>
+      <span class="forMobile selected-option-name">Font Size</span>
+      <ul class="SwymGrOptionsList">
+        <li data-value="size-small">Small</li>
+        <li data-value="size-medium">Medium</li>
+        <li data-value="size-large">Large</li>
+      </ul>
+    </div>
+    
+    <div class="SwymGrCustomSelect" id="fontColorSelect">
+      <span class="forMain selected-option-name">Select Font Color</span>
+      <span class="forMobile selected-option-name">Font Color</span>
+      <ul class="SwymGrOptionsList">
+        <li data-value="color-black">Black</li>
+        <li data-value="color-red">Red</li>
+        <li data-value="color-blue">Blue</li>
+        <li data-value="color-green">Green</li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+
+         
+<div class="SwymGrTextFields">
+  <div class="InputTextFields" data-selector-type="listed">
+    <div class="flex justify-between">
+    </div>
+      <div class="SwymGrTextField SingleInputField" data-eligibility="OneLineText_TwoLineText_ThreeLineText_TwoLineTextWithImage_ThreeLineTextWithImage_ThreeLineTextWithImageAndAdditionalText_TwoLineTextWithClipart">
+          <label class="opt-text-field" id="label-" for="TextFieldName">Name:</label>
+          <input type="text" class="opt-btn focus-label js-option" name="properties[Name]" id="TextFieldName" value="">
+      </div>
+    
+      <div class="SwymGrTextField SingleInputField" data-eligibility="TwoLineText_ThreeLineText_TwoLineTextWithImage_ThreeLineTextWithImage_ThreeLineTextWithImageAndAdditionalText_TwoLineTextWithClipart">
+          <label class="opt-text-field" id="label-" for="TextFieldDate">Date:</label>
+          <input type="text" class="opt-btn focus-label js-option" name="properties[Date]" id="TextFieldDate" value="">
+      </div>
+    
+      <div class="SwymGrTextField SingleInputField" data-eligibility="ThreeLineText_ThreeLineTextWithImage_ThreeLineTextWithImageAndAdditionalText">
+        <label class="opt-text-field" id="label-" for="TextFieldSentiment">Sentiment:</label>
+        <input type="text" class="opt-btn focus-label js-option" name="properties[Sentiment]" id="TextFieldSentiment" value="" style="display:none;">
+        <div class="SwymGrCustomSelect TextFieldSelect" id="SelectFieldSentiment">
+            <span class="selected-option-name">Choose Options</span>
+            <ul class="SwymGrOptionsList">
+              <li>In God’s Loving Care</li>
+              <li>The Lord is My Shepherd</li>
+              <li>Angels Guard You Forever</li>
+              <li>Beloved of the Lord</li>
+              <li>If God So Will, I Know That Will Is Love</li>
+              <li>Resting Eternally with Chirst</li>
+              <li>Good And Faithful Servant</li>
+              <li>Sleep On Now and Take Your Rest</li>
+              <li>May He/She Rest In Peace</li>
+              <li>We Will Always Remember You</li>
+              <li>A Friend To All</li>
+              <li>At Last Untill We Meet Again</li>
+              <li>Time Passes, Love Remains</li>
+              <li>Love You Forever And Ever</li>
+              <li>Gone, but Never Forgotten</li>
+              <li>Always Loving, Always Loved</li>
+              <li>Forever in Our Hearts</li>
+              <li>We Will Love You Forever</li>
+              <li>Loved With Everlasting Love</li>
+              <li>Memories Keep You With Us</li>
+              <li>Until We Meet Again</li>
+              <li>In Loving Memory</li>
+              <li>A Beautiful Soul</li>
+              <li>Forever Remembered</li>
+              <li>A Long Life Well Lived</li>
+            </ul>
+        </div>
+      </div>
+    
+      <div class="SwymGrTextField SingleInputField" data-eligibility="ThreeLineText_ThreeLineTextWithImage_ThreeLineTextWithImageAndAdditionalText">
+          <label class="opt-text-field" id="label-" for="TextFieldSentiment2">Use My Own Sentiment:</label>
+          <textarea class="opt-btn focus-label js-option" id="TextFieldSentiment2" value=""></textarea>
+      </div>
+    
+      <div class="SwymGrTextField SingleInputField" style="display:none;">
+        <label class="opt-text-field" id="label-" for="TextFieldSentiment">Add Additional Photo/Text Side:</label>
+        <input type="text" class="opt-btn focus-label js-option" name="properties[Sentiment3]" id="TextFieldSentiment3" value="" style="display:none;">
+        <div class="SwymGrCustomSelect TextFieldSelect">
+            <span class="selected-option-name">Choose Options</span>
+            <ul class="SwymGrOptionsList">
+              <li>Option 1</li>
+              <li>Option 2</li>
+              <li>Option 3</li>
+            </ul>
+        </div>
+      </div>
+    
+      <div class="SwymGrTextField SingleInputField">
+          <label class="opt-text-field" id="label-" for="TextFieldAdditionalComments">If You Have Any Additional Comments or Instruction, Please Enter Here:</label>
+          <textarea type="text" class="opt-btn focus-label js-option" name="properties[Additional Comments]" id="TextFieldAdditionalComments" value=""></textarea>
+      </div>
+    
+      <div class="SwymGrTextField SingleInputField" style="display:none;">
+          <input type="hidden" id="PreviewImage" name="properties[Preview Image]"> 
+      </div>
+
+      {% assign additional_product = all_products['additional-line-clipart'] %}
+      <div class="SwymGrTextField SingleInputField AdditionalLineWrapper" style="display:none;">
+          <label class="opt-text-field" id="label-" for="TextFieldAdditionalTextLine">Add Additional Text here:</label> 
+          <div class="Additional-fields-sample" style="display:none !important;">
+              <div class="Additional-fields-wrapper" data-var-id="{{ additional_product.selected_or_first_available_variant.id }}">
+                <textarea type="text" class="opt-btn focus-label js-option" name="properties[Additional Text]" id="TextFieldAdditionalTextLine" value=""></textarea>
+                <span class="RemoveAddtionalLine">×</span>
+              </div>
+          </div>
+          <div class="Additional-fields-Top-wrapper"></div>
+      </div>
+      
+      <div class="SwymGrTextField SingleInputField AdditionalClipartWrapper" style="display:none;">
+          <label class="opt-text-field" id="label-" for="TextFieldAdditionalClipart">Add Additional Clipart here:</label> 
+          <div class="Additional-fields-sample" style="display:none !important;">
+              <div class="Additional-fields-wrapper" data-var-id="{{ additional_product.selected_or_first_available_variant.id }}">
+                 <label class="opt-text-field" id="label-" for="UploadCustomClipart">
+                    <img src="https://cdn.shopify.com/s/files/1/1616/1777/files/51_4c995cb4-76a4-4635-98b6-6b9d0d0176fa.png?v=1728482386" alt='custom-upload' width="" height="">
+                    Upload Additional Clipart 
+                 </label>
+                 <input type="file" class="opt-btn focus-label js-option" name="properties[Custom Clipart]" id="UploadCustomClipart" value="" style="display: none;">
+                 <span class="RemoveAddtionalLine">×</span>
+              </div>
+          </div>
+          <div class="Additional-fields-Top-wrapper"></div>
+      </div>
+      
+  </div>
+
+
+  <div class="InputSelectFields" >
+    
+     <!-- ----------- AdditionalButtons ------------- -->
+      <div class="AdditionalButtons">
+          <div class="SwymGrTextField">
+              <label class="opt-text-field" id="label-" for="TextFieldName">Additional line  +USD 05.00:</label>
+              <span class="AdditionalLine AdditionalButton">
+                <img src="https://cdn.shopify.com/s/files/1/1616/1777/files/Frame_10.svg?v=1728538839" width="" height="">
+                <span class="AdditionalButton_text">Additional line</span>
+              </span>
+          </div>
+      
+          <div class="SwymGrTextField">
+              <label class="opt-text-field" id="label-" for="TextFieldName">Additional Clipart  +USD 05.00:</label>
+              <span class="AdditionalClipart AdditionalButton">
+                <img src="https://cdn.shopify.com/s/files/1/1616/1777/files/bl_1.png?v=1728539717" width="" height="">
+                <span class="AdditionalButton_text">Addition Clipart</span>
+              </span>
+          </div>
+      </div>
+          
+      
+      <!-- ----------- Image ------------- -->
+        <div class="Image-block">
+            <div class="SwymGrCustomSelect-wr SingleInputField" data-eligibility="TwoLineTextWithImage_ThreeLineTextWithImage_ThreeLineTextWithImageAndAdditionalText">
+                <span class="opt-text-field" >Select Image:</span>
+                <div class="SwymGrCustomSelect" id="CustomImageSelect">
+                    <span class="selected-option-name"><span><img src="https://cdn.shopify.com/s/files/1/1616/1777/files/512clip_1.png" /> </span>Select Image</span>
+                    <ul class="SwymGrOptionsList">
+                      <li><img src="https://cdn.shopify.com/s/files/1/1616/1777/files/q_1.png?v=1729158968"  width="" height="" /> Flower</li>
+                      <li><img src="https://cdn.shopify.com/s/files/1/1616/1777/files/white-star.png?v=1729165908" width="" height="" /> Stars</li>
+                      <li><img src="https://cdn.shopify.com/s/files/1/1616/1777/files/w.png?v=1729159076" width="" height="" /> Bird</li>
+                    </ul>
+                </div>
+            </div>
+            <div class="SwymGrTextField SingleInputField" data-eligibility="TwoLineTextWithImage_ThreeLineTextWithImage_ThreeLineTextWithImageAndAdditionalText">
+                <span class="opt-text-field">Upload Custom Image</span>
+                <label class="opt-text-field" id="label-" for="UploadCustomImage">
+                  <img src="https://cdn.shopify.com/s/files/1/1616/1777/files/51_4c995cb4-76a4-4635-98b6-6b9d0d0176fa.png?v=1728482386" alt='custom-upload' width="" height="">
+                  Upload Image </label>
+                <input type="file" class="opt-btn focus-label js-option" name="properties[Custom Image]" id="UploadCustomImage" value="">
+            </div>
+            <div class="SwymGrCustomSelect-wr SingleInputField" data-eligibility="TwoLineTextWithImage_ThreeLineTextWithImage_ThreeLineTextWithImageAndAdditionalText">
+                <label class="opt-text-field" for="CustomImagePositionValue">Adjust Image Position:</label>
+                <div class="SwymGrCustomSelect CstmSelectSingleOption" id="CustomImagePosition">
+                  <input type="text" value="" style="display:none;" id="CustomImagePositionValue"/>
+                  <span class="selected-option-name"> Bottom Center </span>
+                  <ul class="SwymGrOptionsList">
+                    {% if template.suffix contains 'custom-grave-marker' %}
+                      <li data-value="top-left">Top Left</li>
+                      <li data-value="top-center">Top Center</li>
+                      <li data-value="top-right">Top Right</li>
+                      <li data-value="middle-left">Middle Left</li>
+                      <li data-value="middle-center">Middle Center</li>
+                      <li data-value="middle-right">Middle Right</li>
+                      <li data-value="bottom-left">Bottom Left</li>
+                      <li data-value="bottom-center">Bottom Center</li>
+                      <li data-value="bottom-right">Bottom Right</li>
+                    {% endif %}
+                    {% if template.suffix contains 'custom-rectangle' %}
+                      <li data-value="above-sand-text">Above Text</li>
+                      <li data-value="below-sand-text">Below Text</li>
+                    {% endif %}
+                  </ul>
+                </div>
+            </div>
+        </div>
+      
+      <!-- ----------- Clipart ------------- -->
+        <div class="Clipart-block">
+           <div class="SwymGrCustomSelect-wr SingleInputField" data-eligibility="TwoLineTextWithClipart">
+              <span class="opt-text-field" >Select Clipart +USD 00.00:</span>
+              <div class="SwymGrCustomSelect" id="CustomClipArtSelect">
+                  <span class="selected-option-name"><span><img src="https://cdn.shopify.com/s/files/1/1616/1777/files/512clip_1.png" /> </span>Select Clipart</span>
+                  <ul class="SwymGrOptionsList">
+                    <li><img src="https://cdn.shopify.com/s/files/1/1616/1777/files/q_1.png?v=1729158968" width="" height="" /> Flower</li>
+                    <li><img src="https://cdn.shopify.com/s/files/1/1616/1777/files/white-star.png?v=1729165908" width="" height="" /> Stars</li>
+                    <li><img src="https://cdn.shopify.com/s/files/1/1616/1777/files/w.png?v=1729159076" width="" height="" /> Bird</li>
+                  </ul>
+              </div>
+            </div>
+            <div class="SwymGrTextField SingleInputField" data-eligibility="TwoLineTextWithClipart">
+                <span class="opt-text-field">Upload Custom Clipart</span>
+                <label class="opt-text-field" id="label-" for="UploadCustomClipart">
+                  <img src="https://cdn.shopify.com/s/files/1/1616/1777/files/51_4c995cb4-76a4-4635-98b6-6b9d0d0176fa.png?v=1728482386" alt='custom-upload' width="" height="">
+                  Upload Clipart </label>
+                <input type="file" class="opt-btn focus-label js-option" name="properties[Custom Clipart]" id="UploadCustomClipart" value="">
+            </div>
+            <div class="SwymGrCustomSelect-wr SingleInputField" data-eligibility="TwoLineTextWithClipart">
+                <label class="opt-text-field" for="CustomImagePositionValue">Adjust Clipart Position:</label>
+                <div class="SwymGrCustomSelect CstmSelectSingleOption" id="CustomImagePosition">
+                  <input type="text" value="" name="properties[Clipart Position]" style="display:none;" id="CustomClipartPositionValue"/>
+                  <span class="selected-option-name"> Adjust Clipart Postion </span>
+                  <ul class="SwymGrOptionsList">
+                    {% if template.suffix contains 'custom-grave-marker' %}
+                      <li data-value="top-left">Top Left</li>
+                      <li data-value="top-center">Top Center</li>
+                      <li data-value="top-right">Top Right</li>
+                      <li data-value="middle-left">Middle Left</li>
+                      <li data-value="middle-center">Middle Center</li>
+                      <li data-value="middle-right">Middle Right</li>
+                      <li data-value="bottom-left">Bottom Left</li>
+                      <li data-value="bottom-center">Bottom Center</li>
+                      <li data-value="bottom-right">Bottom Right</li>
+                    {% endif %}
+                    
+                    {% if template.suffix contains 'custom-rectangle' %}
+                      <li data-value="above-sand-text">Above Text</li>
+                      <li data-value="below-sand-text">Below Text</li>
+                    {% endif %}
+                  </ul>
+                </div>
+            </div>
+        </div>
+      
+      <!-- ----------- Select Border ------------- -->
+      <div class="Template-block">
+          <div class="SwymGrCustomSelect-wr">
+              <label class="opt-text-field" for="CustomSelectBorderValue">Select Border:</label>
+              <div class="SwymGrCustomSelect CstmSelectSingleOption" id="CustomSelectBorder">
+                <input type="text" value="" name="properties[Border Style]" style="display:none;" id="CustomSelectBorderValue"/>
+                <span class="selected-option-name"> Select Border</span>
+                <ul class="SwymGrOptionsList">
+                  {% for image in current_variant.metafields.custom.variant_image.value %}
+                      <li>{{ image | image_url: width: 125 | image_tag  }} </li>
+                  {% endfor %}
+                </ul>
+              </div>
+          </div>
+      </div>
+  </div>
+</div>

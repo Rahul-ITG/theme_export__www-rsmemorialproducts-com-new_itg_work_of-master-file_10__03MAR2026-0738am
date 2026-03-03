@@ -1,0 +1,298 @@
+{%- if block.settings.text != blank or block.settings.page.content != blank or product.metafields.custom.weight_data != blank or product.metafields.custom.overall_heigth_data != blank or product.metafields.custom.overall_depth_data != blank or product.metafields.custom.overall_width != blank or product.metafields.custom.specifications != blank -%}
+
+                  
+                  {% assign display_block = 1 %}         
+                  {% if block.settings.heading == 'Specifications'%}
+                    {% if product.metafields.custom.specifications == blank %}
+                       {% assign display_block = 0 %}  
+                    {% else %}
+                      {% assign display_block = 1 %}  
+                    {% endif %}
+                  {% endif %}
+
+                  {% if block.settings.heading == 'Overall Width'%}
+                    {% if product.metafields.custom.overall_width == blank %}
+                      {% assign display_block = 0 %}  
+                    {% else %}
+                       {% assign display_block = 1 %}
+                    {% endif %}
+                  {% endif %}
+
+                  {% if block.settings.heading == 'Overall Depth'%}
+                    {% if product.metafields.custom.overall_depth_data == blank %}
+                      {% assign display_block = 0 %} 
+                    {% else %}
+                      {% assign display_block = 1 %} 
+                    {% endif %}
+                  {% endif %}
+
+                  {% if block.settings.heading == 'Overall Heigth'%}
+                    {% if product.metafields.custom.overall_heigth_data == blank %}
+                      {% assign display_block = 0 %}
+                    {% else %}
+                       {% assign display_block = 1 %} 
+                    {% endif %}
+                  {% endif %}
+
+                  {% if block.settings.heading == 'Weight'%}
+                    {% if product.metafields.custom.weight_data == blank %}
+                      {% assign display_block = 0 %}  
+                    {% else %}
+                      {% assign display_block = 1 %} 
+                    {% endif %}
+                  {% endif %}
+                           
+                <details-disclosure {{ block.shopify_attributes }} style="{% if display_block == 0 %}display:none;{% endif %}">
+                  <details class="disclosure disclosure--row"{% if block.settings.open %} open{% endif %}>
+                    <summary>
+                      <div class="flex justify-between items-center">
+                        <h2 class="disclosure__title product-info__disclosure font-body font-bold text-body flex flex-auto items-center mb-0">
+                          {%- if block.settings.icon != 'none' -%}
+                            {% render 'icon', icon: block.settings.icon, width: 22, height: 22 %}
+                          {%- endif -%}
+                          {{- block.settings.heading | default: block.settings.page.title -}}
+                        </h2>
+                        <span class="disclosure__toggle">
+                          {%- if settings.disclosure_toggle == 'plus' -%}
+                            {% render 'icon-plus' %}
+                          {%- else -%}
+                            {% render 'icon-chevron-down' %}
+                          {%- endif -%}
+                        </span>
+                      </div>
+                    </summary>
+                    <div class="disclosure__panel has-motion">
+                      <div class="disclosure__content rte">
+
+                        {% if block.settings.heading == 'Specifications' or block.settings.heading == 'Overall Width' or block.settings.heading == 'Overall Depth' or block.settings.heading == 'Overall Heigth' or block.settings.heading == 'Weight' %}
+                           {% if product.metafields.custom.specifications != blank %}
+                              {% if block.settings.heading == 'Specifications'%}
+                                {{ product.metafields.custom.specifications | metafield_tag }}
+                              {% endif %}
+                           {% endif %}
+                           {% if product.metafields.custom.overall_width != blank %}
+                              {% if block.settings.heading == 'Overall Width'%}
+                                {{ product.metafields.custom.overall_width | metafield_tag }}
+                              {% endif %}
+                           {% endif %}
+                           {% if product.metafields.custom.overall_depth_data != blank %}
+                              {% if block.settings.heading == 'Overall Depth'%}
+                                {{ product.metafields.custom.overall_depth_data | metafield_tag }}
+                              {% endif %}
+                           {% endif %}
+                           {% if product.metafields.custom.overall_heigth_data != blank %}
+                              {% if block.settings.heading == 'Overall Heigth'%}
+                                {{ product.metafields.custom.overall_heigth_data | metafield_tag }}
+                              {% endif %}
+                           {% endif %}
+                           {% if product.metafields.custom.weight_data != blank %}
+                              {% if block.settings.heading == 'Weight'%}
+                                {{ product.metafields.custom.weight_data | metafield_tag }}
+                              {% endif %}
+                           {% endif %}
+                        {% else %}
+                          {{ block.settings.text }}
+                          {{ block.settings.page.content }}
+                        {% endif %}
+                      
+                      </div>
+                    </div>
+                  </details>
+                </details-disclosure>
+              {%- endif -%}
+
+{% schema %}
+  {
+    "name": "Collapsible content",
+      "settings": [
+        {
+          "type": "paragraph",
+          "content": "This will be automatically hidden if there is no content to show."
+        },
+        {
+          "type": "text",
+          "id": "heading",
+          "label": "Heading",
+          "default": "Collapsible content"
+        },
+        {
+          "type": "select",
+          "id": "icon",
+          "label": "Icon",
+          "options": [
+            {
+              "value": "none",
+              "label": "None"
+            },
+            {
+              "value": "award",
+              "label": "Award"
+            },
+            {
+              "value": "box",
+              "label": "Box"
+            },
+            {
+              "value": "briefcase",
+              "label": "Briefcase"
+            },
+            {
+              "value": "calendar",
+              "label": "Calendar"
+            },
+            {
+              "value": "chat_bubble",
+              "label": "Chat bubble"
+            },
+            {
+              "value": "check_mark",
+              "label": "Check mark"
+            },
+            {
+              "value": "check_mark_in_circle",
+              "label": "Check mark in circle"
+            },
+            {
+              "value": "clock",
+              "label": "Clock"
+            },
+            {
+              "value": "credit_card",
+              "label": "Credit card"
+            },
+            {
+              "value": "dollar_sign",
+              "label": "Dollar sign"
+            },
+            {
+              "value": "dryer",
+              "label": "Dryer"
+            },
+            {
+              "value": "email",
+              "label": "Email"
+            },
+            {
+              "value": "eye",
+              "label": "Eye"
+            },
+            {
+              "value": "feather",
+              "label": "Feather"
+            },
+            {
+              "value": "gift",
+              "label": "Gift"
+            },
+            {
+              "value": "heart",
+              "label": "Heart"
+            },
+            {
+              "value": "iron",
+              "label": "Iron"
+            },
+            {
+              "value": "leaf",
+              "label": "Leaf"
+            },
+            {
+              "value": "leather",
+              "label": "Leather"
+            },
+            {
+              "value": "lock",
+              "label": "Lock"
+            },
+            {
+              "value": "map_pin",
+              "label": "Map pin"
+            },
+            {
+              "value": "pants",
+              "label": "Pants"
+            },
+            {
+              "value": "percent",
+              "label": "Percent"
+            },
+            {
+              "value": "phone",
+              "label": "Phone"
+            },
+            {
+              "value": "plane",
+              "label": "Plane"
+            },
+            {
+              "value": "price_tag",
+              "label": "Price tag"
+            },
+            {
+              "value": "question_mark",
+              "label": "Question mark"
+            },
+            {
+              "value": "return",
+              "label": "Return"
+            },
+            {
+              "value": "ruler",
+              "label": "Ruler"
+            },
+            {
+              "value": "scissors",
+              "label": "Scissors"
+            },
+            {
+              "value": "shirt",
+              "label": "Shirt"
+            },
+            {
+              "value": "shoe",
+              "label": "Shoe"
+            },
+            {
+              "value": "silhouette",
+              "label": "Silhouette"
+            },
+            {
+              "value": "star",
+              "label": "Star"
+            },
+            {
+              "value": "truck",
+              "label": "Truck"
+            },
+            {
+              "value": "washing",
+              "label": "Washing"
+            }
+          ],
+          "default": "none"
+        },
+        {
+          "type": "richtext",
+          "id": "text",
+          "label": "Content",
+          "default": "<p>Add your content here</p>"
+        },
+        {
+          "type": "page",
+          "id": "page",
+          "label": "Content from page"
+        },
+        {
+          "type": "checkbox",
+          "id": "open",
+          "label": "Open by default",
+          "default": false
+        }
+      ],
+    "presets": [
+      {
+        "name": "Collapsible content"
+      }
+    ]
+  }
+{% endschema %}

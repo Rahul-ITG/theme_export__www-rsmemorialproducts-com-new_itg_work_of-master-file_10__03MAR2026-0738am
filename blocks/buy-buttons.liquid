@@ -1,0 +1,216 @@
+{% assign product_form_id = 'product-form-' | append: section.id %}
+{% assign current_variant = product.selected_or_first_available_variant %}
+<div class="product-info__block" {{ block.shopify_attributes }}>
+                
+              <product-form>
+                {%- form 'product', product,
+                  class: 'js-product-form js-product-form-main',
+                  id: product_form_id
+                -%}
+                   
+                  <div class="productView-optionsGrid carpel_galaxy_customization">
+
+                        <div class="form-field">
+                             <label class="form-label">Date of Service:</label>
+                             <select class="form-select form-select--date" data-name="properties[Month]" name="">
+                                <option value="">Month</option>
+                                <option value="Jan">Jan</option>
+                                <option value="Feb">Feb</option>
+                                <option value="Mar">Mar</option>
+                                <option value="Apr">Apr</option>
+                                <option value="May">May</option>
+                                <option value="Jun">Jun</option>
+                                <option value="Jul">Jul</option>
+                                <option value="Aug">Aug</option>
+                                <option value="Sep">Sep</option>
+                                <option value="Oct">Oct</option>
+                                <option value="Nov">Nov</option>
+                                <option value="Dec">Dec</option>
+                             </select>
+                             <select class="form-select form-select--date" data-name="properties[Day]" name="">
+                              <option value="">Day</option>
+                              <option value="1">1</option>
+                              <option value="2">2</option>
+                              <option value="3">3</option>
+                              <option value="4">4</option>
+                              <option value="5">5</option>
+                              <option value="6">6</option>
+                              <option value="7">7</option>
+                              <option value="8">8</option>
+                              <option value="9">9</option>
+                              <option value="10">10</option>
+                              <option value="11">11</option>
+                              <option value="12">12</option>
+                              <option value="13">13</option>
+                              <option value="14">14</option>
+                              <option value="15">15</option>
+                              <option value="16">16</option>
+                              <option value="17">17</option>
+                              <option value="18">18</option>
+                              <option value="19">19</option>
+                              <option value="20">20</option>
+                              <option value="21">21</option>
+                              <option value="22">22</option>
+                              <option value="23">23</option>
+                              <option value="24">24</option>
+                              <option value="25">25</option>
+                              <option value="26">26</option>
+                              <option value="27">27</option>
+                              <option value="28">28</option>
+                              <option value="29">29</option>
+                              <option value="30">30</option>
+                              <option value="31">31</option>
+                             </select>
+                             <select class="form-select form-select--date" data-name="properties[Year]" name="">
+                              <option value="">Year</option>
+                              <option value="2025">2025</option>
+                              <option value="2026">2026</option>
+                              <option value="2027">2027</option>
+                              <option value="2028">2028 </option>
+                              <option value="2029"> 2029</option>
+                              <option value="2030">2030</option>
+                              <option value="2031">2031</option>
+                              <option value="2032">2032</option>
+                              <option value="2033">2033</option>
+                              <option value="2034">2034</option>
+                              <option value="2035">2035</option>
+                             </select>
+                          </div>
+    
+                          <div class="form-field">
+                              <label class="form-label">Personalization:<small>*</small></label>
+                              <select class="form-select form-select--small itg_default_selection" id="itg_default_selection" data-name="properties[Personalization]" name="">
+                                  <option value="No">No</option>
+                                  <option value="Yes">Yes</option>
+                              </select>
+                         </div>
+
+                        {% content_for 'blocks' %}
+
+                  </div>
+                
+                  {%- liquid
+                    assign gift_card_recipient_feature_active = false
+                    if block.settings.show_gift_card_recipient and product.gift_card?
+                      assign gift_card_recipient_feature_active = true
+                    endif
+
+                    assign enable_dynamic_checkout = false
+                    if block.settings.enable_dynamic_checkout and product.selling_plan_groups == empty and gift_card_recipient_feature_active == false
+                      unless product.template_suffix contains 'preorder'
+                        assign enable_dynamic_checkout = true
+                      endunless
+                    endif
+                  -%}
+
+                  {%- if gift_card_recipient_feature_active -%}
+                    {% render 'gift-card-recipient', section: section %}
+                  {%- endif -%}
+
+                  <div class="alert mb-8 bg-error-bg text-error-text js-form-error text-start" role="alert" hidden></div>
+                 
+                  <input type="hidden" name="id" value="{{ current_variant.id }}" disabled>
+                  <div class="product-info__add-to-cart flex{% if enable_dynamic_checkout %} qty-input--secondary-btn{% endif %}">
+                    {%- if block.settings.show_qty_selector -%}
+                      {% render 'quantity-input', layout_style: "combined" %}
+                    {%- else -%}
+                      <input type="hidden" name="quantity" value="1">
+                    {%- endif -%}
+
+                    {% if customer %}
+                    <div class="product-info__add-button">
+                      {%- capture add_to_cart_text -%}
+                        {%- if product.template_suffix contains 'preorder' -%}
+                          {{- 'products.product.preorder' | t -}}
+                        {%- else -%}
+                          {{- 'products.product.add_to_cart' | t -}}
+                        {%- endif -%}
+                      {%- endcapture -%}
+
+                      <button type="submit" data-add-to-cart-text="{{ add_to_cart_text | escape }}" class="btn {% if enable_dynamic_checkout %}btn--secondary{% else %}btn--primary{% endif %} w-full" name="add"{% if product.available == false %} disabled{% endif %}>
+                        {%- if product.available -%}
+                          {{- add_to_cart_text -}}
+                        {%- else -%}
+                          {{- 'products.product.sold_out' | t -}}
+                        {%- endif -%}
+                      </button>
+                      
+                    </div>
+                    {% endif %}
+                  </div>
+
+                  {%- if enable_dynamic_checkout -%}
+                     {%- if customer -%}
+                          {{ form | payment_button }}
+                       {% else %}
+                    {% endif %}
+                  {%- endif -%}
+                {%- endform -%}
+              </product-form>
+
+              {%- if block.settings.show_pickup_availability -%}
+                {% render 'pickup-availability', current_variant: current_variant %}
+              {%- endif -%}
+            </div>
+
+
+{% schema %}
+  {
+    "name": "Buy buttons",
+    "settings": [
+        {
+          "type": "checkbox",
+          "id": "show_qty_selector",
+          "label": "Show quantity selector",
+          "default": true
+        },
+        
+        {
+          "type": "checkbox",
+          "id": "enable_dynamic_checkout",
+          "label": "Show dynamic checkout button",
+          "info": "Using the payment methods available on your store, customers see their preferred option, like PayPal or Apple Pay. [Learn more](https://help.shopify.com/manual/using-themes/change-the-layout/dynamic-checkout)",
+          "default": true
+        },
+        {
+          "type": "checkbox",
+          "id": "show_pickup_availability",
+          "label": "Show pickup availability",
+          "info": "Show customers where they can pick up the product. [Learn more](https://help.shopify.com/en/manual/shipping/setting-up-and-managing-your-shipping/local-methods/local-pickup)",
+          "default": true
+        },
+        {
+          "type": "checkbox",
+          "id": "show_gift_card_recipient",
+          "default": false,
+          "label": "Show recipient information form for gift cards",
+          "info": "Allow customers to send gift cards to a recipient along with a personal message. When enabled, the dynamic checkout button will be disabled for gift cards. [Learn more](https://help.shopify.com/manual/online-store/themes/customizing-themes/add-gift-card-recipient-fields)"
+        }
+      ],
+    "blocks": [
+      {
+        "type": "form_name"
+      },
+      {
+        "type": "form_date"
+      },
+      {
+        "type": "form_font"
+      },
+      {
+        "type": "form_clipart"
+      },
+      {
+        "type": "form_sentiment"
+      },
+      {
+        "type": "form_text"
+      }
+    ],
+    "presets": [
+      {
+        "name": "Buy buttons"
+      }
+    ]
+  }
+{% endschema %}

@@ -1,0 +1,35 @@
+{% if customer %}
+{%- comment -%}
+  Parameters:
+  - price {Price} - Price
+  - show_money_with_currency {Boolean} - Force the price to show/not show with currency. If not provided, defaults to settings.show_currency_code
+{%- endcomment -%}
+
+{%- liquid
+  if show_money_with_currency == nil
+    assign show_money_with_currency = settings.show_currency_code
+  endif
+
+  if show_money_with_currency
+    assign money_price = price | money_with_currency
+  else
+    assign money_price = price | money
+  endif
+
+  if settings.superscript_decimals
+    unless shop.money_format contains 'money' or shop.money_format contains '.'
+      assign separator = "."
+      if shop.money_format contains '{{amount_with_comma_separator}}' or shop.money_format contains '{{ amount_with_comma_separator }}'
+        assign separator = ","
+      endif
+
+      assign parts = money_price | split: separator
+      if parts.size > 1
+        assign money_price = parts[0] | append: '<sup>' | append: parts[1] | append: '</sup>'
+      endif
+    endunless
+  endif
+
+  echo money_price
+-%}
+{% endif %}

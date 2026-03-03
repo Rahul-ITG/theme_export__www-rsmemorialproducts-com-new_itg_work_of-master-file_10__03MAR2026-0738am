@@ -1,0 +1,118 @@
+{%- assign has_variant_picker = false -%}
+
+{%- liquid
+    assign product_form_id = 'product-form-' | append: section.id
+  if has_variant_picker
+    assign anchor = "variants"
+  else
+    assign anchor = "product-info"
+  endif
+
+    assign current_variant = product.selected_or_first_available_variant
+    assign media_ratio = section.settings.media_ratio
+
+  if media_ratio == 'natural'
+    assign media_ratio = 99
+    for media in product.media
+      if media.preview_image.aspect_ratio < media_ratio
+        assign media_ratio = media.preview_image.aspect_ratio
+      endif
+    endfor
+  endif
+-%}
+ 
+ {%- unless product.has_only_default_variant -%}
+    {%- assign has_variant_picker = true -%}
+    {%- if section.settings.sticky_atc_panel and product.available -%}
+      <a class="product-options--anchor" id="variants" rel="nofollow"></a>
+    {%- endif -%}
+      <div class="product-info__block product-options" {{ block.shopify_attributes }}>
+      {% render 'variant-picker',
+        product: product,
+        product_form_id: product_form_id,
+        block: block,
+        media_ratio: media_ratio,
+        swatch_crop: section.settings.media_crop,
+        update_url: true
+      %}
+    </div>
+  {%- endunless -%}
+
+  {%- if block.settings.show_backorder_text -%}
+    <div class="product-info__block product-backorder">
+      {% render 'backorder', product: product, variant: current_variant %}
+    </div>
+  {%- endif -%}
+
+{% schema %}
+  {
+    "name": "Variant picker",
+    "settings": [
+      {
+        "type": "select",
+        "id": "selector_style",
+        "label": "Selector style",
+        "info": "Swatches may not show as a dropdown, depending on the settings in Theme Settings > Swatches > Variant pickers.",
+        "options": [
+          {
+            "value": "buttons",
+            "label": "Buttons"
+          },
+          {
+            "value": "dropdown",
+            "label": "Dropdown"
+          }
+        ],
+        "default": "buttons"
+      },
+      {
+        "type": "checkbox",
+        "id": "enable_dynamic_availability",
+        "label": "Show availability in selectors",
+        "default": true,
+        "info": "Availability of variants will be shown in option selectors and update each time one is changed."
+      },
+      {
+        "type": "checkbox",
+        "id": "dynamic_availability_downwards",
+        "label": "Update availability only in subsequent options",
+        "info": "When an option is selected, options below it are updated to show their availability.",
+        "default": false
+      },
+      {
+        "type": "checkbox",
+        "id": "show_backorder_text",
+        "label": "Show backorder text",
+        "info": "Only shows for products which use Shopify inventory tracking and are available to purchase when out of stock.",
+        "default": true
+      },
+      {
+        "type": "header",
+        "content": "Size chart"
+      },
+      {
+        "type": "checkbox",
+        "id": "enable_size_chart",
+        "label": "Enable size chart",
+        "default": false
+      },
+      {
+        "type": "text",
+        "id": "size_chart_variant",
+        "label": "Option name",
+        "info": "The label to show the link beside.",
+        "default": "Size"
+      },
+      {
+        "type": "page",
+        "id": "size_chart_page",
+        "label": "Page containing the size chart."
+      }
+    ],
+    "presets": [
+      {
+        "name": "Variant picker"
+      }
+    ]
+  }
+{% endschema %}

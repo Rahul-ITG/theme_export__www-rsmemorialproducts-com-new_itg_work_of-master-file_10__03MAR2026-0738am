@@ -1,0 +1,25 @@
+{%- if product.type != blank -%}
+            <div class="product-info__block product-info__block--sm text-sm" {{ block.shopify_attributes }}>
+              {%- liquid
+                assign product_type_handle = product.type | handle
+                if collections[product_type_handle].handle == product_type_handle
+                  assign type_url = collections[product_type_handle].url
+                else
+                  assign type_url = product.type | url_for_type
+                endif
+              -%}
+              {{ product.type | link_to: type_url }}
+            </div>
+          {%- endif -%}
+
+{% schema %}
+  {
+    "name": "Type",
+    "settings": [],
+    "presets": [
+      {
+        "name":"Type"
+      }
+    ]
+  }
+{% endschema %}

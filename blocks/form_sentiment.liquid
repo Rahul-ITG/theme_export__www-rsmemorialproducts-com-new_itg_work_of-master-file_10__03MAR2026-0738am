@@ -1,0 +1,34 @@
+<div class="form-field filed_galaxy">
+  <label class="form-label">{{ block.settings.text }}<small>*</small></label>
+  <select class="form-select form-select--small form-select-check" data-name="properties[Sentiment]" name="" required>
+          <option value="">Choose Options</option>
+          {% assign symbols = block.settings.st_values | split: ',' %}
+          {% for symbol in symbols %}
+             <option value="{{ symbol | strip }}">{{ symbol | strip }}</option>
+          {% endfor %}
+  </select>
+</div>
+
+{% schema %}
+  {
+    "name": "Form sentiment",
+    "settings": [
+      {
+        "type": "text",
+        "id": "text",
+        "label":"Text"
+      },
+      {
+        "type": "textarea",
+        "id": "st_values",
+        "label": "Sentiment Option",
+        "default": "Choose Options"
+      }
+    ],
+    "presets": [
+      {
+        "name": "Form sentiment"
+      }
+    ]
+  }
+{% endschema %}

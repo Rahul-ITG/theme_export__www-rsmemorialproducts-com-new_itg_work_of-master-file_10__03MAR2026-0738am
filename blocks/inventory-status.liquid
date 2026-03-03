@@ -1,0 +1,66 @@
+{% assign current_variant = product.selected_or_first_available_variant %}
+
+{%- if current_variant.inventory_management != blank -%}
+  {% render 'product-inventory', product: product, current_variant: current_variant, block: block %}
+{%- endif -%}
+
+{% schema %}
+  {
+    "name": "Inventory status",
+    "settings": [
+      {
+        "type": "paragraph",
+        "content": "Inventory colors and thresholds can be changed in \"Theme Settings > Product Inventory\"."
+      },
+      {
+        "type": "checkbox",
+        "id": "show_indicator_bar",
+        "label": "Show inventory indicator bar",
+        "default": true
+      },
+      {
+        "type": "header",
+        "content": "Urgency messages"
+      },
+      {
+        "type": "checkbox",
+        "id": "show_urgency_message",
+        "label": "Show urgency message",
+        "default": true
+      },
+      {
+        "type": "richtext",
+        "id": "text_very_low",
+        "label": "Text when inventory is very low",
+        "default": "<p>- Almost gone!</p>"
+      },
+      {
+        "type": "richtext",
+        "id": "text_low",
+        "label": "Text when inventory is low",
+        "default": "<p>- Hurry while stocks last!</p>"
+      },
+      {
+        "type": "richtext",
+        "id": "text_normal",
+        "label": "Text when inventory is normal"
+      },
+      {
+        "type": "richtext",
+        "id": "text_no_stock",
+        "label": "Text when out of stock"
+      },
+      {
+        "type": "richtext",
+        "id": "text_no_stock_backordered",
+        "label": "Text when backordered",
+        "default": "<p>Backordered</p>"
+      }
+    ],
+    "presets": [
+      {
+        "name": "Inventory status"
+      }
+    ]
+  }
+{% endschema %}

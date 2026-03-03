@@ -1,0 +1,23 @@
+{%- if block.settings.text != blank -%}
+  <div class="product-info__block rte" {{ block.shopify_attributes }}>
+    {{ block.settings.text }}
+  </div>
+{%- endif -%}
+
+{% schema %}
+  {
+     "name": "Rich text",
+    "settings": [
+      {
+        "type": "richtext",
+        "id": "text",
+        "label": "Rich text"
+      }
+    ],
+    "presets": [
+      {
+        "name": "Rich text"
+      }
+    ]
+  }
+{% endschema %}

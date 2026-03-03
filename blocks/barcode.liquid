@@ -1,0 +1,18 @@
+{% assign current_variant = product.selected_or_first_available_variant %}
+
+<div class="product-info__block product-info__block--sm product-info__barcode text-sm" {{ block.shopify_attributes }}{% if current_variant.barcode == blank %} hidden{% endif %}>
+  <span class="product-info-label">{{ 'products.product.barcode' | t }}</span>
+  <span class="product-info__barcode-value">{% if current_variant.barcode %}{{ current_variant.barcode }}{% endif %}</span>
+</div>
+
+
+{% schema %}
+  {
+    "name": "Barcode (ISBN, UPC, etc)",
+    "presets": [
+      {
+        "name": "Barcode (ISBN, UPC, etc)"
+      }
+    ]
+  }
+{% endschema %}

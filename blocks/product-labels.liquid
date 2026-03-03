@@ -1,0 +1,39 @@
+{%- capture variant_labels -%}
+              {%- for variant in product.variants -%}
+                {%- liquid
+                  assign variant_label = blank
+                  capture variant_label
+                    render 'product-label', product: product, variant: variant, is_product_card: false, limit: 99
+                  endcapture
+                -%}
+                {%- if variant_label != blank -%}
+                  <div class="variant-label js-variant-label" hidden data-variant-id="{{ variant.id }}">
+                    {{ variant_label }}
+                  </div>
+                {%- endif -%}
+              {%- endfor -%}
+            {%- endcapture -%}
+
+            {%- if variant_labels != blank -%}
+              <variant-label class="block product-info__block product-info__block--sm" data-current-variant-id="{{ current_variant.id }}">
+                {{ variant_labels }}
+              </variant-label>
+              <script src="{{ 'variant-label.js' | asset_url }}" defer="defer"></script>
+            {%- endif -%}
+
+{% schema %}
+  {
+    "name": "Product labels",
+    "settings": [
+      {
+        "type": "paragraph",
+        "content": "See settings in \"Theme Settings > Product labels\"."
+      }
+    ],
+    "presets": [
+      {
+        "name": "Product labels"
+      }
+    ]
+  }
+{% endschema %}

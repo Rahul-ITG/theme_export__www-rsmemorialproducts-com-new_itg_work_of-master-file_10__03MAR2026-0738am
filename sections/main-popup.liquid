@@ -1,0 +1,56 @@
+<div id="PopupContainer" {% unless template.name == 'index'%}style="display: none !important;"{% endunless %}>
+    <div class="Popup">
+        <div class="PopupContent">
+            <div class="PopupInner">
+                <span id="ClosePopup">
+                  {%- render 'icon-close' -%}
+                </span>
+                <div class="logoImg"> 
+                    <img src="{{ section.settings.Logo | img_url: 'master' }}" alt="{{ section.settings.Logo }}">
+                </div>
+                <div class="Popup-textnote">
+                  {{ section.settings.QuickNote }}
+                </div>
+                <button class="ProceedButton">{{ section.settings.ProceedButton }}</button>
+                <div class="Popup-AdditionalText">
+                  {{ section.settings.AdditionalText }}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+{% schema %}
+  {
+    "name": "Main Popup",
+    "settings": [
+      {
+        "type": "image_picker",
+        "id": "Logo",
+        "label": "Logo"
+      },
+      {
+        "type": "richtext",
+        "id": "QuickNote",
+        "label": "Quick Note"
+      },
+      {
+        "type": "richtext",
+        "id": "AdditionalText",
+        "label": "Additional text"
+      },
+      {
+        "type": "text",
+        "id": "ProceedButton",
+        "default": "Proceed to Site",
+        "label": "Button label"
+      }
+    ],
+    "presets": [
+      {
+        "name": "Main Popup"
+      }
+    ]
+  }
+{% endschema %}

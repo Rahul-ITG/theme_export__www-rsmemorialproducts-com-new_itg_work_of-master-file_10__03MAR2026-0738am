@@ -1,0 +1,22 @@
+<div class="form-field filed_galaxy">
+  <label class="form-label">{{ block.settings.text }}</label>
+  <input class="form-input form-input--small" type="text" data-name="properties[Dates]" name="" value="" maxlength="40">
+</div>
+
+{% schema %}
+  {
+    "name": "Form date",
+    "settings": [
+      {
+        "type": "text",
+        "id": "text",
+        "label":"Text"
+      }
+    ],
+    "presets": [
+      {
+        "name": "Form date"
+      }
+    ]
+  }
+{% endschema %}

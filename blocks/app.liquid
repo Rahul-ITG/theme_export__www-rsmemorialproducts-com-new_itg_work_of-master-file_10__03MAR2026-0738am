@@ -1,0 +1,15 @@
+<div class="product-info__block" {{ block.shopify_attributes }}>
+  {% render block %}
+</div>
+
+{% schema %}
+  {
+    "name": "App",
+    "presets": [
+      {
+        "name": "App"
+      }
+    ]
+    
+  }
+{% endschema %}

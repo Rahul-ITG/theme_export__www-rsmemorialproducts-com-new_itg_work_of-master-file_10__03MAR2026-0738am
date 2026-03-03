@@ -1,0 +1,464 @@
+{%- comment -%}theme-check-disable NestedSnippet{%- endcomment -%}
+{{ 'cart-items.css' | asset_url | stylesheet_tag }}
+
+{%- if cart != empty -%}
+  <link rel="stylesheet" id="cart-summary-css" href="{{ 'cart-summary.css' | asset_url }}">
+{%- endif -%}
+
+{%- if section.settings.show_order_note -%}
+  <script src="{{ 'cart-note.js' | asset_url }}" defer="defer"></script>
+{%- endif -%}
+<div class="container">
+  <form class="cart form{% if cart != empty %} cart--with-items gap-theme heading--{{ section.settings.heading_align }}{% endif %}" id="cart" action="{{ routes.cart_url }}" method="post" enctype="multipart/form-data">
+    <input type="hidden" name="" value="" id="select_date">
+    <div class="cart__items">
+       
+   {% assign handling_fee_product = all_products['handling-fee'] %}
+   {% assign handling_fee_id = handling_fee_product.selected_or_first_available_variant.id %}
+   <input type="hidden" id="handling-fee-id" value="{{ handling_fee_id }}">
+      
+      {%- if section.settings.show_page_title -%}
+        <h1 class="h2 mb-10{% if cart != empty %} {{ section.settings.heading_align }}{% else %} text-center{% endif %} js-cart-title">{{ 'cart.general.title' | t }}</h1>
+      {%- endif -%}
+
+      {%- if settings.show_free_shipping_notice and cart != empty -%}
+        {% render 'free-shipping-notice' %}
+      {%- endif -%}
+
+      <div class="alert mt-6 mb-6 bg-error-bg text-error-text" id="cart-errors" role="alert" hidden></div>
+
+      {% render 'cart-items' %}
+
+      {%- if settings.show_recommendations and cart != empty -%}
+        <div class="cart-page-recommendations mt-8">
+          {%- liquid
+            if settings.recommendations_layout == 'carousel'
+              assign grid_classes = 'grid grid-flow-col auto-cols-1 md:auto-cols-2 gap-x-theme'
+            else
+              assign grid_classes = 'grid grid-cols-1 sm:grid-cols-2 md:grid-cols-1 xl:grid-cols-2 gap-x-theme'
+            endif
+          -%}
+          {%- render 'recommendations',
+                  is_cart: true,
+                  products_to_show: settings.recommendations_to_show,
+                  heading: settings.recommendations_heading,
+                  layout: settings.recommendations_layout,
+                  grid_classes: grid_classes,
+                  always_open_quickbuy: true
+          -%}
+        </div>
+      {%- endif -%}
+
+      {%- if section.settings.show_shipping_calculator and cart != empty -%}
+        <div class="cart__shipping-calculator panel mt-8">
+          {% render 'shipping-calculator',
+            id: 'cart',
+            default_country: section.settings.shipping_calculator_default_country
+          %}
+        </div>
+      {%- endif -%}
+    </div>
+
+    {%- if cart != empty -%}
+    
+      <div class="cart__summary p-6 md:p-8" id="cart-summary" data-section="{{ section.id }}">
+          <div class="itg_shipping_datepicker">
+             <details-disclosure class="block mt-6">
+                <details class="cart-note-disclosure disclosure disclosure--row">
+                  <summary>
+                    <div class="flex justify-between items-center">
+                      <span class="js-show-note">Need by Date <span class="required-asterisk">*</span></span>
+                      <span class="disclosure__toggle">
+                        {%- if settings.disclosure_toggle == 'plus' -%}
+                          {% render 'icon-plus' %}
+                        {%- else -%}
+                          {% render 'icon-chevron-down' %}
+                        {%- endif -%}
+                      </span>
+                    </div>
+                  </summary>
+                  <div class="disclosure__panel has-motion">
+                    <div class="itg-carrier-account-detail-field">
+                      <label>Date:</label>
+                      {% comment %}<input type="text" class="input-full cart_datepicker" id="datepicker" />{% endcomment %}
+                       <input type="date" class="input-full cart_datepicker"  id="html_datepicker" name="attributes[Date]"/>
+                    </div>
+                  </div>
+                </details>
+              </details-disclosure>
+          </div>
+
+         <div class="itg_shipping_datepicker">
+             <details-disclosure class="block mt-6">
+                <details class="cart-note-disclosure disclosure disclosure--row">
+                  <summary>
+                    <div class="flex justify-between items-center">
+                      <span class="js-show-note">PO Number & PDF <span class="required-asterisk">*</span></span>
+                      <span class="disclosure__toggle">
+                        {%- if settings.disclosure_toggle == 'plus' -%}
+                          {% render 'icon-plus' %}
+                        {%- else -%}
+                          {% render 'icon-chevron-down' %}
+                        {%- endif -%}
+                      </span>
+                    </div>
+                  </summary>
+                  <div class="disclosure__panel has-motion">
+                    
+                    <div class="itg-carrier-account-detail-field">
+                      <label>PO Number:</label>
+                      <input type="text" class="input-full cart_ponumber" name="attributes[PO Number]" value="">
+                    </div>
+                   
+                    <div class="itg-carrier-account-detail-field pdf_field" id="pdf_final">
+                      <label>PDF File:</label>
+                      <input type="file" class="input-full" id="pdf_file" name="image" accept="application/pdf">
+                    </div>
+                    
+                    
+                  </div>
+                </details>
+              </details-disclosure>
+          </div>
+
+          <div class="itg_shipping_method">
+            <h2 class="h5">{{ section.settings.shipping_method }}</h2>
+            <div class="itg_shipping_checkbox">
+              <label><input type="checkbox" class="itg_shipping_show_hide" name="attributes[Shipping_Account]" value="false">Use My Shipping Account</label>
+              <div class="itg-shipping-checkbox-div">
+                <div class="itg-shipping-checkbox-div-inner">
+                  <p>We will ship this order using the shipping number supplied below. Invalid or deactivated account numbers could result in delayed shipments and additional fees.</p>
+                  <div class="itg-carrier-account-details">
+                    {% assign get_shipping_details = '' %}
+                    {% if customer.metafields.custom.shipping_carrier_ups.value != blank %}
+                          {% assign get_shipping_details = customer.metafields.custom.shipping_carrier_ups.value %}
+                    {% elsif customer.metafields.custom.shipping_carrier_usps.value != blank %}
+                          {% assign get_shipping_details = customer.metafields.custom.shipping_carrier_usps.value %}
+                    {% elsif customer.metafields.custom.shipping_carrier_fedex.value != blank %}
+                          {% assign get_shipping_details = customer.metafields.custom.shipping_carrier_fedex.value %}
+                    {% elsif customer.metafields.custom.shipping_carrier_other.value  != blank %}
+                          {% assign get_shipping_details = customer.metafields.custom.shipping_carrier_other.value %}
+                    {% endif %}
+                    
+                    {% assign shipping_details_array  = get_shipping_details | split: ", " %}
+                    {% assign shipping_carrier  = shipping_details_array[0] %}
+                    {% assign shipping_method  = shipping_details_array[1] %}
+                    {% assign shipping_account_number  = shipping_details_array[2] %}
+                    {% assign shipping_zip_code  = shipping_details_array[3] %}
+
+                    <div class="itg-carrier-account-detail-field">
+                      <label>My Carrier:</label>
+                      <select class="input-full itgcarrierselect" name="attributes[Shipping Account Carrier]" required="">
+                        <option value="BLANK" {% if get_shipping_details == '' %}selected{% endif %}>Please Select</option>
+                        <option value="UPS" {% if get_shipping_details contains 'UPS' %}selected{% endif %}>UPS</option>
+                        {% comment %}<option value="USPS"  {% if get_shipping_details contains 'USPS' %}selected{% endif %}>USPS</option>{% endcomment %}
+                        <option value="FedEx" {% if get_shipping_details contains 'FedEx' %}selected{% endif %}>FedEx</option>
+                        <option value="Other" {% if get_shipping_details contains 'Other' %}selected{% endif %}>Other</option>
+                      </select>
+                    </div>
+                    <div class="itg-carrier-account-detail-field itg_otherfiled_hide">
+                      <label>My Carrier Shipping Method:</label>
+                      <select data-attr-value="BLANK" class="input-full itgcarriermethodselect" {% if get_shipping_details == '' %}style="display:inline-block;"{% endif %}>
+                        <option value="null">Please Select</option>
+                      </select>
+                      <select data-attr-value="UPS" class="input-full itgcarriermethodselect" {% if get_shipping_details contains 'UPS' %}style="display:inline-block;"{% endif %} name="attributes[My Carrier Shipping Method]">
+                        <option value="null" {% if shipping_method == '' %}selected{% endif %}>Please Select</option>
+                        <option value="UPS Ground" {% if shipping_method contains 'UPS Ground' %}selected{% endif %}>UPS Ground</option>
+                        <option value="UPS 3-Day Select" {% if shipping_method contains 'UPS 3-Day Select' %}selected{% endif %}>UPS 3-Day Select</option>
+                        <option value="UPS 2nd Day Air" {% if shipping_method contains 'UPS 2nd Day Air' %}selected{% endif %}>UPS 2nd Day Air</option>
+                        <option value="UPS Next Day Air" {% if shipping_method contains 'UPS Next Day Air' %}selected{% endif %}>UPS Next Day Air</option>
+                        <option value="UPS Next Day Air Saver" {% if shipping_method contains 'UPS Next Day Air Saver' %}selected{% endif %}>UPS Next Day Air Saver</option>
+                      </select>
+                      <select data-attr-value="USPS" class="input-full itgcarriermethodselect" {% if get_shipping_details contains 'USPS' %}style="display:inline-block;"{% endif %} name="attributes[My Carrier Shipping Method]">
+                        <option value="null" {% if shipping_method == '' %}selected{% endif %}>Please Select</option>
+                        <option value="First Class Mail" {% if shipping_method contains 'First Class Mail' %}selected{% endif %}>First Class Mail</option>
+                        <option value="Ground Advantage" {% if shipping_method contains 'Ground Advantage' %}selected{% endif %}>Ground Advantage</option>
+                        <option value="Media Mail" {% if shipping_method contains 'Media Mail' %}selected{% endif %}>Media Mail</option>
+                        <option value="Priority Mail" {% if shipping_method contains 'Priority Mail' %}selected{% endif %}>Priority Mail</option>
+                        <option value="Priority Mail Express" {% if shipping_method contains 'Priority Mail Express' %}selected{% endif %}>Priority Mail Express</option>
+                      </select>
+                      <select data-attr-value="FedEx" class="input-full itgcarriermethodselect" {% if get_shipping_details contains 'FedEx' %}style="display:inline-block;"{% endif %} name="attributes[My Carrier Shipping Method]">
+                        <option value="null" {% if shipping_method == '' %}selected{% endif %}>Please Select</option>
+                        <option value="FedEx Ground" {% if shipping_method contains 'FedEx Ground' %}selected{% endif %}>FedEx Ground</option>
+                        <option value="FedEx 2Day" {% if shipping_method contains 'FedEx 2Day' %}selected{% endif %}>FedEx 2Day</option>
+                        <option value="FedEx Priority Overnight" {% if shipping_method contains 'FedEx Priority Overnight' %}selected{% endif %}>FedEx Priority Overnight</option>
+                      </select>
+                    </div>
+
+                    <div class="itg-carrier-account-detail-field itg_otherfiled_show" {% if get_shipping_details contains 'Other' %}style="display:inline-block;"{% endif %}>
+                      <label>Other:</label>
+                      <input type="text" class="input-full" name="attributes[My Carrier Shipping Method]" {% if get_shipping_details contains 'Other' and shipping_method != blank %}value="{{ shipping_method }}"{% endif %} >
+                    </div>
+                    
+                    <div class="itg-carrier-account-detail-field">
+                      <label>My Carrier Account Number:</label>
+                      <input type="text" class="input-full" name="attributes[Shipping Account Number]"  {% if shipping_account_number != blank %}value="{{ shipping_account_number }}"{% endif %}>
+                    </div>
+
+                    <div class="itg-carrier-account-detail-field">
+                      <label>My Carrier Account Billing Zip Code:</label>
+                      <input type="text" class="input-full" name="attributes[Zip code]" {% if shipping_zip_code != blank %}value="{{ shipping_zip_code }}"{% endif %}>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="SaveDetails">
+                  <button class="btn btn--secondary btn--sm" id="SwymGrSaveShipping" data-customer="{{ customer.id }}">Save Details</button>
+                  <p class="save_detail_res">Shipping Details Saved.</p>
+                </div>
+                
+              </div>
+            </div>
+          </div>
+               
+          <div class="itg_cart__summary_main">
+          {%- if cart != empty -%}
+            <h2 class="h5">{{ 'cart.summary.title' | t }}</h2>
+            {%- if section.settings.show_order_note -%}
+              <details-disclosure class="block mt-6">
+                <details class="cart-note-disclosure disclosure disclosure--row">
+                  <summary>
+                    <div class="flex justify-between items-center">
+                      <span class="js-show-note">
+                        {%- if cart.note == blank -%}
+                          {{- 'cart.note.add' | t -}}
+                        {%- else -%}
+                          {{- 'cart.note.edit' | t -}}
+                        {%- endif -%}
+                      </span>
+                      <span class="disclosure__toggle">
+                        {%- if settings.disclosure_toggle == 'plus' -%}
+                          {% render 'icon-plus' %}
+                        {%- else -%}
+                          {% render 'icon-chevron-down' %}
+                        {%- endif -%}
+                      </span>
+                    </div>
+                  </summary>
+                  <div class="disclosure__panel has-motion">
+                    <div class="disclosure__content">
+                      <cart-note>
+                        <label class="visually-hidden" for="cart-note">{{ 'cart.note.label' | t }}</label>
+                        <textarea class="input w-full" id="cart-note" name="note" rows="4">{{ cart.note }}</textarea>
+                      </cart-note>
+                    </div>
+                  </div>
+                </details>
+              </details-disclosure>
+            {%- endif -%}
+  
+            {%- if section.settings.show_tax_and_shipping -%}
+              <div class="mt-6 rte">
+                {%- if cart.taxes_included and shop.shipping_policy.body != blank -%}
+                  {{- 'cart.general.taxes_included_shipping_at_checkout_html' | t: link: shop.shipping_policy.url -}}
+                {%- elsif cart.taxes_included -%}
+                  {{- 'cart.general.taxes_included_shipping_at_checkout' | t -}}
+                {%- elsif shop.shipping_policy.body != blank -%}
+                  {{- 'cart.general.taxes_and_shipping_at_checkout_html' | t: link: shop.shipping_policy.url -}}
+                {%- else -%}
+                  {{- 'cart.general.taxes_and_shipping_at_checkout' | t -}}
+                {%- endif -%}
+              </div>
+            {%- endif -%}
+  
+            {%- if cart.cart_level_discount_applications.size > 0 -%}
+              <ul class="mt-3 mb-2 font-bold" aria-label="{{ 'customer.order.discount' | t }}" role="list">
+                {%- for discount in cart.cart_level_discount_applications -%}
+                  <li class="mt-2">
+                    <div class="discount text-sm inline-flex items-center" dir="auto">
+                      {% render 'icon-tags' %} {{ discount.title | escape_once }} (-{{ discount.total_allocated_amount | money }})
+                    </div>
+                  </li>
+                {%- endfor -%}
+              </ul>
+            {%- endif -%}
+           
+            <div class="flex justify-between items-center mt-6">
+              <h3 class="mb-0 h6">{{ 'cart.summary.subtotal' | t }}:</h3>
+              <p class="mb-0 h6">{%- render 'price-as-money', price: cart.total_price, show_money_with_currency: true -%}</p>
+            </div>
+          
+            {%- if section.settings.cart_terms_page != blank -%}
+              <cart-terms class="block mt-6">
+                <input type="checkbox" class="checkbox js-cart-terms-checkbox" id="cart-terms" form="cart">
+                <label for="cart-terms">
+                  <span class="rte">{{ 'cart.terms.agreement_html' | t: terms_url: section.settings.cart_terms_page }}</span>
+                </label>
+              </cart-terms>
+            {%- endif -%}
+  
+            <div class="mt-6">
+               {% if customer %}
+                <button id="Custom_Checkout" class="btn btn--primary btn--icon-with-text w-full">
+                  {%- if settings.cart_icon == 'bag' -%}
+                    {%- render 'icon-bag' -%}
+                  {%- elsif settings.cart_icon == 'basket' -%}
+                    {%- render 'icon-basket' -%}
+                  {%- else -%}
+                    {%- render 'icon-cart' -%}
+                  {%- endif -%}
+                  {{- 'cart.summary.checkout' | t -}}
+                </button> 
+                   
+                <button class="btn btn--primary btn--icon-with-text w-full" name="checkout" style="display:none !important;">
+                  {%- if settings.cart_icon == 'bag' -%}
+                    {%- render 'icon-bag' -%}
+                  {%- elsif settings.cart_icon == 'basket' -%}
+                    {%- render 'icon-basket' -%}
+                  {%- else -%}
+                    {%- render 'icon-cart' -%}
+                  {%- endif -%}
+                  {{- 'cart.summary.checkout' | t -}}
+                </button>
+              {% else %}
+                 <a class="btn btn--primary btn--icon-with-text w-full" href="/pages/signup-form">
+                {%- if settings.cart_icon == 'bag' -%}
+                  {%- render 'icon-bag' -%}
+                {%- elsif settings.cart_icon == 'basket' -%}
+                  {%- render 'icon-basket' -%}
+                {%- else -%}
+                  {%- render 'icon-cart' -%}
+                {%- endif -%}
+                {{- 'cart.summary.checkout' | t -}}
+              </a>
+              {% endif %}
+              <p class="shipcharged">You will not be charged until your order ships.</p>
+            </div>
+  
+            {%- if additional_checkout_buttons and section.settings.cart_terms_page == blank and section.settings.show_additional_checkout_buttons -%}
+              <div class="dynamic-cart-btns">
+                {{ content_for_additional_checkout_buttons }}
+              </div>
+            {%- endif -%}
+  
+            {%- if section.settings.continue_shopping_page != blank -%}
+              <a href="{{ section.settings.continue_shopping_page.url }}" class="link block text-center w-full mt-6">
+                {{ 'cart.summary.continue_shopping' | t }}
+              </a>
+            {%- endif -%}
+          {%- endif -%}
+        </div>
+      </div>
+    {%- endif -%}
+  </form>
+</div>
+
+<div class="addLoader"></div>
+
+{%- if section.settings.cart_terms_page != blank -%}
+  <script src="{{ 'cart-terms.js' | asset_url }}" defer="defer"></script>
+{%- endif -%}
+
+{% schema %}
+{
+  "name": "Cart",
+  "class": "cc-main-cart section section--template",
+  "settings": [
+    {
+      "type": "header",
+      "content": "Heading"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_page_title",
+      "label": "Show the default page heading",
+      "info": "If hidden, you should provide a primary page heading (h1 tag) in another section with h1 capability (e.g. image banner, slideshow or background video) for SEO purposes.",
+      "default": true
+    },
+    {
+      "type": "select",
+      "id": "heading_align",
+      "label": "Heading alignment",
+      "options": [
+        {
+          "value": "text-start",
+          "label": "Left"
+        },
+        {
+          "value": "text-center",
+          "label": "Center"
+        },
+        {
+          "value": "text-end",
+          "label": "Right"
+        }
+      ],
+      "default": "text-start"
+    },
+    {
+      "type": "header",
+      "content": "Cart items"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_backorder_text",
+      "label": "Show backorder text",
+      "default": true,
+      "info": "Only shows for products which use Shopify inventory tracking and can be purchased when out of stock."
+    },
+    {
+      "type": "checkbox",
+      "id": "show_vendor",
+      "label": "Show vendor",
+      "default": true
+    },
+    {
+      "type": "header",
+      "content": "Order summary"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_order_note",
+      "label": "Show order note",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "show_tax_and_shipping",
+      "label": "Show tax status and shipping policy link",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "show_additional_checkout_buttons",
+      "label": "Show additional checkout options",
+      "default": true,
+      "info": "Display other gateways and quick checkout buttons. [Learn more](https://help.shopify.com/en/manual/payments/accelerated-checkouts)"
+    },
+    {
+      "type": "url",
+      "id": "cart_terms_page",
+      "label": "Terms and conditions link",
+      "info": "Additional checkout options will be hidden when cart terms are shown."
+    },
+    {
+      "type": "url",
+      "id": "continue_shopping_page",
+      "label": "Continue shopping link"
+    },
+    {
+      "id":"shipping_method",
+      "type": "text",
+      "label": "Sipping method heading",
+      "default":"Shipping Method"
+    },
+    {
+      "type": "header",
+      "content": "Shipping calculator"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_shipping_calculator",
+      "label": "Show shipping calculator",
+      "default": false
+    },
+    {
+      "type": "text",
+      "id": "shipping_calculator_default_country",
+      "label": "Default country",
+      "info": "If the customer is logged-in, their default shipping address details will be selected.",
+      "default": "United States"
+    }
+  ]
+}
+{% endschema %}

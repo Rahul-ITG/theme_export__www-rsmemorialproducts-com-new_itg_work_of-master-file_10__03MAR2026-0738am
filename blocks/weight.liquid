@@ -1,0 +1,18 @@
+{% assign current_variant = product.selected_or_first_available_variant %}
+
+<div class="product-info__block product-info__block--sm product-info__weight" {{ block.shopify_attributes }}{% unless current_variant.weight > 0 %} hidden{% endunless %}>
+  {% if current_variant.weight > 0 %}
+    {{ current_variant.weight | weight_with_unit: current_variant.weight_unit }}
+  {% endif %}
+</div>
+
+{% schema %}
+  {
+    "name": "Weight",
+    "presets": [
+      {
+        "name": "Weight"
+      }
+    ]
+  }
+{% endschema %}
